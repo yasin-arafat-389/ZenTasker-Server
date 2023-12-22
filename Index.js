@@ -37,9 +37,18 @@ async function run() {
     });
 
     // API endpoint to get specific tasks filtered by email
-    app.get("/my-tasks", async (req, res) => {
+    app.get("/my-tasks/to-do/all", async (req, res) => {
       let email = req.query.email;
       let result = await tasksCollection.find({ email: email }).toArray();
+      res.send(result);
+    });
+
+    // API endpoint to get specific tasks filtered by email
+    app.get("/my-tasks/to-do", async (req, res) => {
+      let email = req.query.email;
+      let result = await tasksCollection
+        .find({ email: email, status: "to do" })
+        .toArray();
       res.send(result);
     });
 
@@ -78,6 +87,78 @@ async function run() {
             description: updatedData.description,
             deadline: updatedData.deadline,
             priority: updatedData.priority,
+          },
+        },
+        { returnDocument: "after" }
+      );
+
+      res.send(updatedTask);
+    });
+
+    // API endpoint to update status to ongoing
+    app.post("/update-status-to-ongoing", async (req, res) => {
+      let status = req.body.status;
+      let id = req.body.id;
+
+      const updatedTask = await tasksCollection.findOneAndUpdate(
+        { _id: new ObjectId(id) },
+        {
+          $set: {
+            status: status,
+          },
+        },
+        { returnDocument: "after" }
+      );
+
+      res.send(updatedTask);
+    });
+
+    // API endpoint to get all ongoing tasks
+    app.get("/ongoing-task", async (req, res) => {
+      let email = req.query.email;
+      let result = await tasksCollection
+        .find({ email: email, status: "ongoing" })
+        .toArray();
+      res.send(result);
+    });
+
+    // API endpoint to update status to completed
+    app.post("/update-status-to-completed", async (req, res) => {
+      let status = req.body.status;
+      let id = req.body.id;
+
+      const updatedTask = await tasksCollection.findOneAndUpdate(
+        { _id: new ObjectId(id) },
+        {
+          $set: {
+            status: status,
+          },
+        },
+        { returnDocument: "after" }
+      );
+
+      res.send(updatedTask);
+    });
+
+    // API endpoint to get all completed tasks
+    app.get("/completed-task", async (req, res) => {
+      let email = req.query.email;
+      let result = await tasksCollection
+        .find({ email: email, status: "completed" })
+        .toArray();
+      res.send(result);
+    });
+
+    // API endpoint to update status to to do
+    app.post("/update-status-to-todo", async (req, res) => {
+      let status = req.body.status;
+      let id = req.body.id;
+
+      const updatedTask = await tasksCollection.findOneAndUpdate(
+        { _id: new ObjectId(id) },
+        {
+          $set: {
+            status: status,
           },
         },
         { returnDocument: "after" }
