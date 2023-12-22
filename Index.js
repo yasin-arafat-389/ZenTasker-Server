@@ -9,7 +9,11 @@ const port = process.env.PORT || 5001;
 // Parsers
 app.use(
   cors({
-    origin: ["http://localhost:5173"],
+    origin: [
+      "http://localhost:5173",
+      "https://zentask-a150d.web.app",
+      "https://zentask-a150d.firebaseapp.com",
+    ],
     credentials: true,
   })
 );
